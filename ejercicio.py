@@ -8,6 +8,7 @@ transacciones_por_hora = 18
 can_trans_max_hora = 20  #transacciones
 horas_por_dia = 16 #horas
 
+
 #ADMINISTRADOR NO ENTRA AL MODELO
 Cantidad_semana_ADM = 54  #horas
 Trabajo_ADM_semanal = Cantidad_semana_ADM * transacciones_por_hora #horas
@@ -43,13 +44,13 @@ for d in dias:
 
 # Restricciones de horas de trabajo de cada tipo de trabajador
 prob += lpSum(variables[d][h]['FT'] for d in dias) == 48
-prob += lpSum(variables[d][h]['PT'] for d in dias) == 20  # El trabajador part time trabaja 20 horas a la semana
-prob += lpSum(variables[d][h]['PK'] for d in dias) == 18  # El trabajador part time trabaja 20 horas a la semana
+#prob += lpSum(variables[d][h]['PT'] for d in dias) == 20  # El trabajador part time trabaja 20 horas a la semana
+#prob += lpSum(variables[d][h]['PK'] for d in dias) == 18  # El trabajador part time trabaja 20 horas a la semana
 # Restricciones de demanda
  
 for d in dias:
     for h in horas:
-       prob += lpSum(variables[d][h][t] for t in trabajadores) * transacciones_por_hora >=   transacciones_por_semana
+       prob += lpSum(variables[d][h][t] for t in trabajadores) >= transacciones_por_hora / transacciones_por_semana
 
 # Restricción de máximo 1 FT y 1 PK que se turnan los días
 prob += lpSum(variables[d][h]['PT'] for d in dias ) <= 1  # Máximo 1 Part Time en la semana
@@ -60,8 +61,8 @@ prob += lpSum(variables[d][h]['PK'] for d in dias ) <= 1  # Máximo 1 Pick Time 
 prob.solve()
 
 # Imprimir resultado
-print("Status:", LpStatus[prob.status])
-print("Número mínimo de trabajadores necesarios:", value(prob.objective))
+# print("Status:", LpStatus[prob.status])
+# print("Número mínimo de trabajadores necesarios:", value(prob.objective))
 
 # Calcular cantidad de trabajadores por categoría en la semana
 count_FT = sum(value(variables[d][h]['FT']) for d in dias )
